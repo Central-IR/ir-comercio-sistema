@@ -16,20 +16,38 @@ const AUTHORIZED_IPS = process.env.AUTHORIZED_IPS
   : ['187.36.172.217', '179.181.227.90', '187.36.170.127'];
 
 // ============================================================
-// CONFIGURAÇÃO DO SUPABASE
+// CONFIGURAÇÃO DO SUPABASE - 2 PROJETOS DIFERENTES
 // ============================================================
-const supabaseUrl = process.env.SUPABASE_URL_PORTAL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// PROJETO 1: PORTAL (users, sessions, login_attempts, etc)
+const supabaseUrlPortal = process.env.SUPABASE_URL_PORTAL;
+const supabaseKeyPortal = process.env.SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ ERRO: Variáveis de ambiente do Supabase não configuradas');
+// PROJETO 2: APLICAÇÕES (precos, transportadoras, estoque, etc)
+const supabaseUrlApps = process.env.SUPABASE_URL;
+const supabaseKeyApps = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Validar configurações
+if (!supabaseUrlPortal || !supabaseKeyPortal) {
+    console.error('❌ ERRO: Variáveis do Supabase PORTAL não configuradas');
+    console.error('   Necessário: SUPABASE_URL_PORTAL e SUPABASE_ANON_KEY');
     process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+if (!supabaseUrlApps || !supabaseKeyApps) {
+    console.error('❌ ERRO: Variáveis do Supabase APPS não configuradas');
+    console.error('   Necessário: SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY');
+    process.exit(1);
+}
+
+// Cliente do Portal (para autenticação e gestão de usuários)
+const supabasePortal = createClient(supabaseUrlPortal, supabaseKeyPortal);
+
+// Cliente das Aplicações (para dados dos apps: precos, transportadoras, etc)
+const supabaseApps = createClient(supabaseUrlApps, supabaseKeyApps);
+
+console.log('✅ Supabase Portal configurado:', supabaseUrlPortal);
+console.log('✅ Supabase Apps configurado:', supabaseUrlApps);
 
 // ============================================================
 // RATE LIMITING MANUAL
@@ -58,7 +76,6 @@ function checkRateLimit(ip) {
   return true;
 }
 
-// Limpar rate limits expirados a cada hora
 setInterval(() => {
   const now = Date.now();
   for (const [ip, attempt] of loginAttempts.entries()) {
@@ -112,7 +129,7 @@ function isValidUsername(username) {
 
 async function logLoginAttempt(username, success, reason, deviceToken, ip) {
   try {
-    await supabase.from('login_attempts').insert({
+    await supabasePortal.from('login_attempts').insert({
       username: sanitizeString(username),
       ip_address: ip,
       device_token: sanitizeString(deviceToken),
@@ -142,7 +159,6 @@ app.use(express.json({ limit: '10mb' }));
 // MIDDLEWARE DE AUTENTICAÇÃO PARA APPS
 // ============================================================
 async function verificarAutenticacao(req, res, next) {
-  // Rotas públicas
   const publicPaths = [
     '/',
     '/health',
@@ -170,7 +186,8 @@ async function verificarAutenticacao(req, res, next) {
   try {
     const sanitizedToken = sanitizeString(sessionToken);
 
-    const { data: session, error } = await supabase
+    // USAR supabasePortal para validar sessão
+    const { data: session, error } = await supabasePortal
       .from('active_sessions')
       .select(`
         *,
@@ -203,7 +220,7 @@ async function verificarAutenticacao(req, res, next) {
     }
 
     if (new Date(session.expires_at) < new Date()) {
-      await supabase
+      await supabasePortal
         .from('active_sessions')
         .update({ is_active: false })
         .eq('session_token', sanitizedToken);
@@ -215,7 +232,7 @@ async function verificarAutenticacao(req, res, next) {
     }
 
     // Atualizar última atividade
-    await supabase
+    await supabasePortal
       .from('active_sessions')
       .update({ 
         last_activity: new Date().toISOString(),
@@ -239,28 +256,22 @@ app.use(verificarAutenticacao);
 // ============================================================
 // ARQUIVOS ESTÁTICOS
 // ============================================================
-// Portal (rota raiz)
 app.use('/portal', express.static(path.join(__dirname, 'apps', 'portal', 'public')));
-
-// Tabela de Preços
 app.use('/precos', express.static(path.join(__dirname, 'apps', 'precos', 'public')));
 
 // ============================================================
 // ROTAS DO PORTAL
 // ============================================================
 
-// Rota raiz → Portal
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'apps', 'portal', 'public', 'index.html'));
 });
 
-// API - Obter IP público
 app.get('/api/ip', (req, res) => {
   const cleanIP = getClientIP(req);
   res.json({ ip: cleanIP });
 });
 
-// API - Verificar IP autorizado
 app.get('/api/check-ip-access', (req, res) => {
   const cleanIP = getClientIP(req);
   const authorized = isIPAuthorized(cleanIP);
@@ -272,7 +283,6 @@ app.get('/api/check-ip-access', (req, res) => {
   });
 });
 
-// API - Verificar horário comercial
 app.get('/api/business-hours', (req, res) => {
   const now = new Date();
   const brasiliaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
@@ -288,7 +298,7 @@ app.get('/api/business-hours', (req, res) => {
   });
 });
 
-// API - Login
+// API - Login (USA supabasePortal)
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password, deviceToken } = req.body;
@@ -296,9 +306,7 @@ app.post('/api/login', async (req, res) => {
     console.log('📥 Requisição de login recebida:', { username, hasPassword: !!password, hasDeviceToken: !!deviceToken });
 
     if (!username || !password || !deviceToken) {
-      return res.status(400).json({ 
-        error: 'Campos obrigatórios ausentes' 
-      });
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
     }
 
     const cleanIP = getClientIP(req);
@@ -315,15 +323,11 @@ app.post('/api/login', async (req, res) => {
     const sanitizedDeviceToken = sanitizeString(deviceToken);
 
     if (!isValidUsername(sanitizedUsername)) {
-      return res.status(400).json({ 
-        error: 'Formato de usuário inválido' 
-      });
+      return res.status(400).json({ error: 'Formato de usuário inválido' });
     }
 
     if (password.length < 1 || password.length > 100) {
-      return res.status(400).json({ 
-        error: 'Senha inválida' 
-      });
+      return res.status(400).json({ error: 'Senha inválida' });
     }
 
     if (!isIPAuthorized(cleanIP)) {
@@ -338,7 +342,8 @@ app.post('/api/login', async (req, res) => {
     const usernameSearch = sanitizedUsername.toLowerCase();
     console.log('🔍 Buscando usuário:', usernameSearch);
 
-    const { data: userData, error: userError } = await supabase
+    // USAR supabasePortal para buscar usuário
+    const { data: userData, error: userError } = await supabasePortal
       .from('users')
       .select('id, username, password, name, is_admin, is_active, sector, apps')
       .ilike('username', usernameSearch)
@@ -347,9 +352,7 @@ app.post('/api/login', async (req, res) => {
     if (userError || !userData) {
       console.log('❌ Usuário não encontrado:', usernameSearch);
       await logLoginAttempt(sanitizedUsername, false, 'Usuário não encontrado', sanitizedDeviceToken, cleanIP);
-      return res.status(401).json({ 
-        error: 'Usuário ou senha incorretos' 
-      });
+      return res.status(401).json({ error: 'Usuário ou senha incorretos' });
     }
 
     console.log('✅ Usuário encontrado:', userData.username, '| Setor:', userData.sector);
@@ -357,9 +360,7 @@ app.post('/api/login', async (req, res) => {
     if (userData.is_active === false) {
       console.log('❌ Usuário inativo:', sanitizedUsername);
       await logLoginAttempt(sanitizedUsername, false, 'Usuário inativo', sanitizedDeviceToken, cleanIP);
-      return res.status(401).json({ 
-        error: 'Usuário inativo' 
-      });
+      return res.status(401).json({ error: 'Usuário inativo' });
     }
 
     if (!userData.is_admin && !isBusinessHours()) {
@@ -374,9 +375,7 @@ app.post('/api/login', async (req, res) => {
     if (password !== userData.password) {
       console.log('❌ Senha incorreta para usuário:', sanitizedUsername);
       await logLoginAttempt(sanitizedUsername, false, 'Senha incorreta', sanitizedDeviceToken, cleanIP);
-      return res.status(401).json({ 
-        error: 'Usuário ou senha incorretos' 
-      });
+      return res.status(401).json({ error: 'Usuário ou senha incorretos' });
     }
 
     console.log('✅ Senha correta');
@@ -389,7 +388,8 @@ app.post('/api/login', async (req, res) => {
     const truncatedUserAgent = sanitizeString(userAgent.substring(0, 95));
     const truncatedDeviceName = sanitizeString(userAgent.substring(0, 95));
 
-    const { error: deviceError } = await supabase
+    // USAR supabasePortal para registrar dispositivo
+    await supabasePortal
       .from('authorized_devices')
       .upsert({
         user_id: userData.id,
@@ -405,15 +405,12 @@ app.post('/api/login', async (req, res) => {
         ignoreDuplicates: false
       });
 
-    if (deviceError) {
-      console.error('❌ Erro ao registrar dispositivo:', deviceError);
-    }
-
     const sessionToken = generateSecureToken();
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24);
 
-    const { data: existingSession } = await supabase
+    // USAR supabasePortal para gerenciar sessões
+    const { data: existingSession } = await supabasePortal
       .from('active_sessions')
       .select('*')
       .eq('user_id', userData.id)
@@ -422,7 +419,7 @@ app.post('/api/login', async (req, res) => {
       .maybeSingle();
 
     if (existingSession) {
-      await supabase
+      await supabasePortal
         .from('active_sessions')
         .update({
           ip_address: cleanIP,
@@ -432,13 +429,13 @@ app.post('/api/login', async (req, res) => {
         })
         .eq('id', existingSession.id);
     } else {
-      await supabase
+      await supabasePortal
         .from('active_sessions')
         .update({ is_active: false })
         .eq('user_id', userData.id)
         .eq('device_token', sanitizedDeviceToken);
 
-      await supabase
+      await supabasePortal
         .from('active_sessions')
         .insert({
           user_id: userData.id,
@@ -471,13 +468,11 @@ app.post('/api/login', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Erro no login:', error);
-    res.status(500).json({ 
-      error: 'Erro interno no servidor'
-    });
+    res.status(500).json({ error: 'Erro interno no servidor' });
   }
 });
 
-// API - Logout
+// API - Logout (USA supabasePortal)
 app.post('/api/logout', async (req, res) => {
   try {
     const { sessionToken } = req.body;
@@ -488,7 +483,7 @@ app.post('/api/logout', async (req, res) => {
 
     const sanitizedToken = sanitizeString(sessionToken);
 
-    await supabase
+    await supabasePortal
       .from('active_sessions')
       .update({ 
         is_active: false,
@@ -504,21 +499,18 @@ app.post('/api/logout', async (req, res) => {
   }
 });
 
-// API - Verificar sessão
+// API - Verificar sessão (USA supabasePortal)
 app.post('/api/verify-session', async (req, res) => {
   try {
     const { sessionToken } = req.body;
 
     if (!sessionToken) {
-      return res.status(400).json({ 
-        valid: false, 
-        reason: 'token_missing' 
-      });
+      return res.status(400).json({ valid: false, reason: 'token_missing' });
     }
 
     const sanitizedToken = sanitizeString(sessionToken);
 
-    const { data: session, error } = await supabase
+    const { data: session, error } = await supabasePortal
       .from('active_sessions')
       .select(`
         *,
@@ -537,40 +529,30 @@ app.post('/api/verify-session', async (req, res) => {
       .single();
 
     if (error || !session) {
-      return res.status(401).json({ 
-        valid: false, 
-        reason: 'session_not_found' 
-      });
+      return res.status(401).json({ valid: false, reason: 'session_not_found' });
     }
 
     const currentIP = getClientIP(req);
 
     if (!session.users.is_active) {
-      await supabase
+      await supabasePortal
         .from('active_sessions')
         .update({ is_active: false })
         .eq('session_token', sanitizedToken);
 
-      return res.status(401).json({ 
-        valid: false, 
-        reason: 'user_inactive' 
-      });
+      return res.status(401).json({ valid: false, reason: 'user_inactive' });
     }
 
     if (new Date(session.expires_at) < new Date()) {
-      await supabase
+      await supabasePortal
         .from('active_sessions')
         .update({ is_active: false })
         .eq('session_token', sanitizedToken);
 
-      return res.status(401).json({ 
-        valid: false, 
-        reason: 'session_expired' 
-      });
+      return res.status(401).json({ valid: false, reason: 'session_expired' });
     }
 
-    // Atualizar última atividade e IP
-    await supabase
+    await supabasePortal
       .from('active_sessions')
       .update({ 
         last_activity: new Date().toISOString(),
@@ -590,34 +572,28 @@ app.post('/api/verify-session', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Erro ao verificar sessão:', error);
-    res.status(500).json({ 
-      valid: false,
-      reason: 'server_error',
-      error: 'Erro ao verificar sessão' 
-    });
+    res.status(500).json({ valid: false, reason: 'server_error' });
   }
 });
 
 // ============================================================
-// ROTAS DA TABELA DE PREÇOS
+// ROTAS DA TABELA DE PREÇOS (USA supabaseApps)
 // ============================================================
 
-// Rota da aplicação
 app.get('/precos/app', (req, res) => {
   res.sendFile(path.join(__dirname, 'apps', 'precos', 'public', 'index.html'));
 });
 
-// APIs da tabela de preços (todas requerem autenticação)
 app.use('/api/precos', verificarAutenticacao);
 
 app.head('/api/precos', (req, res) => {
   res.status(200).end();
 });
 
-// Listar preços
+// Listar preços (USA supabaseApps)
 app.get('/api/precos', async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseApps
       .from('precos')
       .select('*')
       .order('marca', { ascending: true });
@@ -630,10 +606,10 @@ app.get('/api/precos', async (req, res) => {
   }
 });
 
-// Buscar preço específico
+// Buscar preço específico (USA supabaseApps)
 app.get('/api/precos/:id', async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseApps
       .from('precos')
       .select('*')
       .eq('id', req.params.id)
@@ -650,7 +626,7 @@ app.get('/api/precos/:id', async (req, res) => {
   }
 });
 
-// Criar preço
+// Criar preço (USA supabaseApps)
 app.post('/api/precos', async (req, res) => {
   try {
     const { marca, codigo, preco, descricao } = req.body;
@@ -659,7 +635,7 @@ app.post('/api/precos', async (req, res) => {
       return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseApps
       .from('precos')
       .insert([{
         marca: marca.trim(),
@@ -679,7 +655,7 @@ app.post('/api/precos', async (req, res) => {
   }
 });
 
-// Atualizar preço
+// Atualizar preço (USA supabaseApps)
 app.put('/api/precos/:id', async (req, res) => {
   try {
     const { marca, codigo, preco, descricao } = req.body;
@@ -688,7 +664,7 @@ app.put('/api/precos/:id', async (req, res) => {
       return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseApps
       .from('precos')
       .update({
         marca: marca.trim(),
@@ -712,10 +688,10 @@ app.put('/api/precos/:id', async (req, res) => {
   }
 });
 
-// Deletar preço
+// Deletar preço (USA supabaseApps)
 app.delete('/api/precos/:id', async (req, res) => {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseApps
       .from('precos')
       .delete()
       .eq('id', req.params.id);
@@ -733,7 +709,7 @@ app.delete('/api/precos/:id', async (req, res) => {
 // ============================================================
 app.get('/health', async (req, res) => {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseApps
       .from('precos')
       .select('count', { count: 'exact', head: true });
     
@@ -741,7 +717,8 @@ app.get('/health', async (req, res) => {
       status: error ? 'unhealthy' : 'healthy',
       database: error ? 'disconnected' : 'connected',
       timestamp: new Date().toISOString(),
-      supabase: supabaseUrl ? 'configured' : 'not configured',
+      supabasePortal: supabaseUrlPortal ? 'configured' : 'not configured',
+      supabaseApps: supabaseUrlApps ? 'configured' : 'not configured',
       authorizedIPs: AUTHORIZED_IPS.length > 0 ? 'configured' : 'not configured'
     });
   } catch (error) {
@@ -780,8 +757,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('🚀 SISTEMA I.R. COMÉRCIO - MONOREPO UNIFICADO');
   console.log('='.repeat(60));
   console.log(`✅ Servidor rodando na porta ${PORT}`);
-  console.log(`✅ Database: Conectado`);
-  console.log(`✅ Autenticação: Ativa`);
+  console.log(`✅ Supabase Portal: ${supabaseUrlPortal}`);
+  console.log(`✅ Supabase Apps: ${supabaseUrlApps}`);
   console.log(`📍 Portal: http://localhost:${PORT}/`);
   console.log(`📍 Tabela de Preços: http://localhost:${PORT}/precos/app`);
   console.log(`🔒 IPs autorizados: ${AUTHORIZED_IPS.join(', ')}`);
