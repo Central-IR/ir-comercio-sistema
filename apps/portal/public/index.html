@@ -3,73 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="png" href="/portal/I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-PRETO.png">
-    <title>Portal I.R. Comércio</title>
+    <link rel="icon" type="png" href="I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-PRETO.png">
+    <title>Portal</title>
     <style>
-        /* Todo o CSS do seu portal vai aqui */
-        :root {
-            --primary: #ff521d;
-            --bg-primary: #FFFFFF;
-            --bg-secondary: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #6B7280;
-            --border-color: #E5E7EB;
-            --input-bg: #F9FAFB;
-            --success-color: #22C55E;
-            --warning-color: #ff521d;
-            --info-color: #3B82F6;
-            --table-stripe: #FAFAFA;
-            --table-hover: rgb(25, 25, 25);
-            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            --th-bg: #002045;
-            --th-color: #FFFFFF;
-            --th-border: #E5E7EB;
-            --shadow: rgba(25, 25, 25);
-            --btn-register: #3B82F6;
-            --btn-delete: #EF4444;
-            --btn-edit: #6B7280;
-            --btn-view: #ff521d;
-            --btn-save: #22C55E;
-            --alert-color: #EF4444;
-            --bg-sidebar: #FFFFFF;
-        }
+        /* VARIÁVEIS BASE */
+/* VARIÁVEIS BASE - TEMA CLARO COM FUNDO BRANCO PURO */
+:root {
+    --primary: #ff521d;
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --text-primary: #000000;
+    --text-secondary: #6B7280;
+    --border-color: #E5E7EB;
+    --input-bg: #F9FAFB;
+    --success-color: #22C55E;
+    --warning-color: #ff521d;
+    --info-color: #3B82F6;
+    --table-stripe: #FAFAFA;
+    --table-hover: rgb(25, 25, 25);
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --th-bg: #002045
+    --th-color: #FFFFFF;
+    --th-border: #E5E7EB;
+    --shadow: rgba(25, 25, 25);
+    --btn-register: #3B82F6;
+    --btn-delete: #EF4444;
+    --btn-edit: #6B7280;
+    --btn-view: #ff521d;
+    --btn-save: #22C55E;
+    --alert-color: #EF4444;
+    --bg-sidebar: #FFFFFF;
+}
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-primary: #000000;
-                --bg-secondary: #000000;
-                --bg-card: #1A1A1A;
-                --text-primary: #FFFFFF;
-                --text-secondary: #A0A0A0;
-                --border-color: rgba(204, 112, 0, 0.08);
-                --input-bg: #2A2A2A;
-                --table-stripe: #1F1F1F;
-                --table-hover: rgba(128, 128, 128, 0.15);
-                --card-shadow: none;
-                --th-bg: #5A5A5A;
-                --th-color: #FFFFFF;
-                --th-border: #5A5A5A;
-                --shadow: rgba(0, 0, 0, 0.3);
-                --bg-sidebar: #000000;
-            }
-        }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #000000;
+        --bg-secondary: #000000;
+        --bg-card: #1A1A1A;
+        --text-primary: #FFFFFF;
+        --text-secondary: #A0A0A0;
+        --border-color: rgba(204, 112, 0, 0.08);
+        --input-bg: #2A2A2A;
+        --table-stripe: #1F1F1F;
+        --table-hover: rgba(128, 128, 128, 0.15);
+        --card-shadow: none;
+        --th-bg: #5A5A5A;
+        --th-color: #FFFFFF;
+        --th-border: #5A5A5A;
+        --shadow: rgba(0, 0, 0, 0.3);
+        --bg-sidebar: #000000;
+    }
+}
 
-        body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-y: scroll;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        /* Resto do CSS... (mantenho o mesmo do seu arquivo) */
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-y: scroll;
+}
+
         .login-screen {
             width: 100%;
             min-height: 100vh;
@@ -80,9 +81,25 @@
             background: var(--bg-secondary);
         }
 
+        .login-screen::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 81, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 81, 0, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .login-content {
             width: 100%;
             max-width: 500px;
+            position: relative;
+            z-index: 1;
         }
 
         .logo-container {
@@ -98,22 +115,593 @@
             height: 200px;
             max-width: 100%;
             object-fit: contain;
+            object-position: center;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 12px rgba(255, 81, 0, 0.15));
+            transition: opacity 0.3s ease;
         }
 
-        /* Adicione todo o resto do CSS aqui */
+        .logo-dark {
+            display: block;
+        }
+
+        .logo-light {
+            display: none;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .logo-dark {
+                display: none;
+            }
+            
+            .logo-light {
+                display: block;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--bg-card);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
+.btn-login {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #ff521d 0%, #ff521d 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255, 81, 0, 0.5);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid var(--error);
+            color: #DC2626;
+        }
+
+        .message.success {
+            background: rgba(34, 197, 94, 0.15);
+            border-left: 4px solid var(--success);
+            color: #15803D;
+        }
+
+        .dashboard-screen {
+            display: none;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .splash-welcome {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            animation: fadeOut 0.5s ease 2.5s forwards;
+        }
+
+        .splash-greeting {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            opacity: 0;
+            animation: smoothFadeIn 1.5s ease-out 0.3s forwards;
+        }
+
+        @keyframes smoothFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 100;
+            flex-shrink: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar:not(.collapsed) {
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            flex-shrink: 0;
+            opacity: 1;
+            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 90px;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            opacity: 0;
+            transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 90px;
+        }
+
+        .menu-toggle-sidebar {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            position: relative;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .menu-toggle-sidebar:hover {
+            background: rgba(255, 81, 0, 0.1);
+        }
+
+        .hamburger-line {
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        .sidebar:not(.collapsed) .hamburger-line:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .sidebar:not(.collapsed) .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .sidebar:not(.collapsed) .hamburger-line:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .sidebar-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+            min-width: 0;
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .user-name-sidebar {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .user-sector-sidebar {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.2;
+        }
+
+        .logout-btn-sidebar {
+            padding: 0;
+            margin: 0;
+            margin-top: 0.25rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .logout-btn-sidebar:hover {
+            color: var(--error);
+        }
+
+        .sidebar-modules {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0.5rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+            transition: scrollbar-color 0.3s ease;
+        }
+
+        .sidebar:not(.collapsed) .sidebar-modules:hover {
+            scrollbar-color: rgba(136, 136, 136, 0.5) transparent;
+        }
+
+        .sidebar-modules::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-modules::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-modules::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar:not(.collapsed) .sidebar-modules:hover::-webkit-scrollbar-thumb {
+            background: rgba(136, 136, 136, 0.5);
+        }
+
+        .sidebar:not(.collapsed) .sidebar-modules:hover::-webkit-scrollbar-thumb:hover {
+            background: rgba(85, 85, 85, 0.7);
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            min-height: 50px;
+        }
+
+        .module-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 3px solid transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .module-item span:not(.module-icon) {
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed .module-item span:not(.module-icon) {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+        }
+
+        .sidebar.collapsed .module-item::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%) translateX(-5px);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .sidebar.collapsed .module-item:hover::before {
+            opacity: 1;
+            transform: translateY(-50%) translateX(5px);
+        }
+
+        .sidebar.collapsed .module-item {
+            justify-content: center;
+            padding: 0.75rem;
+        }
+
+        .module-item:hover {
+            background: rgba(255, 81, 0, 0.1);
+            color: var(--text-primary);
+            transform: translateX(3px);
+        }
+
+        .sidebar.collapsed .module-item:hover {
+            transform: translateX(0) scale(1.05);
+        }
+
+        .module-item.active {
+            background: rgba(255, 81, 0, 0.15);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .module-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .module-item:hover .module-icon {
+            transform: scale(1.1);
+        }
+
+        .module-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            padding: 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            gap: 1rem;
+            opacity: 1;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .welcome-screen.hidden-smooth {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-greeting {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .welcome-instruction {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        #iframesContainer {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .iframe-container {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.98);
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .iframe-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+            }
+
+            .sidebar.collapsed {
+                margin-left: -280px;
+                width: 280px;
+            }
+
+            .splash-greeting {
+                font-size: 1.5rem;
+                padding: 0 2rem;
+            }
+
+            .welcome-instruction {
+                font-size: 1.1rem;
+            }
+
+            .logo-img {
+                height: 150px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- TODO O HTML DO SEU PORTAL -->
     <div id="loginScreen" class="login-screen">
         <div class="login-content">
             <div class="logo-container">
-                <img src="/portal/I.R.-COMERCIO-MATERIAIS-ELETRICOS-LTDA.png" 
+                <img src="I.R.-COMERCIO-MATERIAIS-ELETRICOS-LTDA.png" 
                      alt="Logo I.R. Comércio" 
-                     class="logo-img logo-dark">
-                <img src="/portal/I.R.-COMERCIO-E-MATERIAIS-ELETRICOS.png" 
+                     class="logo-img logo-dark"
+                     onerror="this.style.display='none'">
+                <img src="I.R.-COMERCIO-E-MATERIAIS-ELETRICOS.png" 
                      alt="Logo I.R. Comércio" 
-                     class="logo-img logo-light">
+                     class="logo-img logo-light"
+                     onerror="this.style.display='none'">
             </div>
 
             <div id="messageBox" class="message"></div>
@@ -121,30 +709,527 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">Usuário</label>
-                    <input type="text" id="username" name="username" required autofocus>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           required 
+                           autofocus 
+                           placeholder="Digite seu usuário"
+                           autocomplete="username">
                 </div>
+
                 <div class="form-group">
                     <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="password-container">
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               required 
+                               placeholder="Digite sua senha"
+                               autocomplete="current-password">
+                        <button type="button" 
+                                class="toggle-password" 
+                                onclick="togglePassword()">MOSTRAR</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn-login">Entrar</button>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    Entrar
+                </button>
             </form>
         </div>
     </div>
 
-    <div id="dashboardScreen" class="dashboard-screen" style="display: none;">
-        <!-- Dashboard content -->
+    <div id="dashboardScreen" class="dashboard-screen">
+        <div class="splash-welcome" id="splashWelcome">
+            <h1 class="splash-greeting">I.R. COMÉRCIO E MATERIAIS ELÉTRICOS LTDA</h1>
+        </div>
+
+        <div class="dashboard-container">
+            <div id="sidebar" class="sidebar collapsed">
+                <div class="sidebar-header">
+                    <button class="menu-toggle-sidebar">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                    <div class="sidebar-title">
+                        <div class="user-name-sidebar" id="sidebarUserName"></div>
+                        <div class="user-sector-sidebar" id="sidebarUserSector"></div>
+                        <button class="logout-btn-sidebar" onclick="logout()">Sair</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-modules" id="sidebarModules"></div>
+
+                <div class="sidebar-footer"></div>
+            </div>
+
+            <div class="main-content">
+                <div class="content-area">
+                    <div id="welcomeScreen" class="welcome-screen">
+                        <div class="welcome-greeting" id="welcomeGreeting"></div>
+                        <div class="welcome-instruction">Selecione um módulo no painel ao lado para começar</div>
+                    </div>
+
+                    <div id="iframesContainer"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         const API_URL = window.location.origin + '/api';
-        
+
+        // ==========================================
+        // PERMISSÕES POR SETOR
+        // ==========================================
+        const SECTOR_PERMISSIONS = {
+            'Administrador': [
+                'pregões', 
+                'tabela-precos', 
+                'compra', 
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'receber',
+                'vendas',
+                'pagamento',
+                'documentos-comercial',
+                'documentos-financeiro'
+            ],
+            'Vendas': [
+                'pregões', 
+                'tabela-precos', 
+                'compra', 
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'documentos-comercial'
+            ],
+            'Financeiro': [
+                'pregões', 
+                'transportadoras', 
+                'faturamento', 
+                'controle-frete', 
+                'receber', 
+                'pagamento', 
+                'documentos-financeiro'
+            ],
+            'Almoxarifado': [
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'documentos-comercial'
+            ]
+        };
+
+        // ==========================================
+        // PERMISSÕES ESPECÍFICAS POR USUÁRIO
+        // ==========================================
+        const USER_SPECIFIC_PERMISSIONS = {
+            'roberto': [
+                'pregões', 
+                'tabela-precos', 
+                'compra', 
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'receber',
+                'vendas',
+                'pagamento',
+                'documentos-comercial'
+            ],
+            'rosemeire': [
+                'pregões', 
+                'tabela-precos', 
+                'compra', 
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'receber',
+                'vendas',
+                'pagamento',
+                'documentos-financeiro'
+            ],
+            'vendas2': [
+                'pregões', 
+                'tabela-precos', 
+                'compra', 
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'vendas-miguel',
+                'documentos-comercial'
+            ],
+            'vendas': [
+                'pregões', 
+                'tabela-precos', 
+                'compra', 
+                'transportadoras', 
+                'cotacoes-frete', 
+                'faturamento', 
+                'estoque', 
+                'controle-frete', 
+                'vendas-isaque',
+                'documentos-comercial'
+            ]
+        };
+
+        // ==========================================
+        // ÍCONES DOS MÓDULOS
+        // ==========================================
+        const MODULE_ICONS = {
+            'pregões': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-8.381 8.38a 1 1 0 0 1-3.001-3l8.384-8.381"/><path d="m16 16 6-6"/><path d="m21.5 10.5-8-8"/><path d="m8 8 6-6"/><path d="m8.5 7.5 8 8"/></svg>',
+            'tabela-precos': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13H7"/><path d="M19 9h-4"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="15" y="5" width="4" height="12" rx="1"/><rect x="7" y="8" width="4" height="9" rx="1"/></svg>',
+            'compra': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>',
+            'transportadoras': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>',
+            'cotacoes-frete': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="m7.5 4.27 9 5.15"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M20.27 17.27 22 19"/></svg>',
+            'faturamento': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M2 15h10"/><path d="m9 18 3-3-3-3"/></svg>',
+            'estoque': '<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>',
+            'controle-frete': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>',
+            'receber': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="m16 19 3 3 3-3"/><path d="M18 12h.01"/><path d="M19 16v6"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>',
+            'vendas': '<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>',
+            'vendas-miguel': '<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>',
+            'vendas-isaque': '<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>',
+            'pagamento': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/><path d="M18 12h.01"/><path d="M19 22v-6"/><path d="m22 19-3-3-3 3"/><path d="M6 12h.01"/><circle cx="12" cy="12" r="2"/></svg>',
+            'documentos-comercial': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>',
+            'documentos-financeiro': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>'
+        };
+
+        // ==========================================
+        // LISTA DE MÓDULOS
+        // ==========================================
         const MODULES = [
-            { id: 'tabela-precos', name: 'Tabela de Preços', url: '/precos/app', available: true },
-            // Outros módulos...
+            { id: 'pregões', name: 'Pregões 🚧', url: 'https://pregoes.onrender.com', available: true },
+            { id: 'tabela-precos', name: 'Tabela de Preços', url: 'https://tabela-precos-udyp.onrender.com', available: true },
+            { id: 'compra', name: 'Ordens de Compra', url: 'https://ordem-compra.onrender.com', available: true },
+            { id: 'transportadoras', name: 'Transportadoras', url: 'https://transportadoras.onrender.com', available: true },
+            { id: 'cotacoes-frete', name: 'Cotações de Frete', url: 'https://cotacoes-frete-aikc.onrender.com', available: true },
+            { id: 'faturamento', name: 'Pedidos de Faturamento', url: 'https://pedido-faturamento.onrender.com', available: true },
+            { id: 'estoque', name: 'Estoque', url: 'https://controle-estoque-0eme.onrender.com', available: true },
+            { id: 'controle-frete', name: 'Controle de Frete', url: 'https://controle-frete.onrender.com', available: true },
+            { id: 'receber', name: 'Contas a Receber', url: 'https://contas-receber-m1xw.onrender.com', available: true },
+            { id: 'vendas', name: 'Vendas', url: 'https://vendas-qdpf.onrender.com', available: true },
+            { id: 'vendas-miguel', name: 'Vendas', url: 'https://vendas-miguel.onrender.com', available: true },
+            { id: 'vendas-isaque', name: 'Vendas', url: 'https://vendas-isaque.onrender.com', available: true },
+            { id: 'pagamento', name: 'Contas a Pagar', url: 'https://contas-a-pagar-ytr6.onrender.com', available: true },
+            { id: 'documentos-comercial', name: 'Documentos 🚧', url: 'https://documentos-comercial.onrender.com', available: true },
+            { id: 'documentos-financeiro', name: 'Documentos 🚧', url: '', available: false }
         ];
-        
-        // Todo o JavaScript do seu portal...
+
+        let deviceToken = null;
+        let publicIP = null;
+        let currentSessionInfo = null;
+        let activeModuleId = null;
+        let hoverTimeout = null;
+
+        function getUserPermissions(sessionInfo) {
+            const username = sessionInfo.username?.toLowerCase();
+            
+            if (USER_SPECIFIC_PERMISSIONS[username]) {
+                return USER_SPECIFIC_PERMISSIONS[username];
+            }
+            
+            const sector = sessionInfo.sector || '';
+            if (SECTOR_PERMISSIONS[sector]) {
+                return SECTOR_PERMISSIONS[sector];
+            }
+            
+            return [];
+        }
+
+        function setupSidebarHover() {
+            const sidebar = document.getElementById('sidebar');
+            
+            sidebar.addEventListener('mouseenter', () => {
+                clearTimeout(hoverTimeout);
+                sidebar.classList.remove('collapsed');
+            });
+            
+            sidebar.addEventListener('mouseleave', () => {
+                hoverTimeout = setTimeout(() => {
+                    sidebar.classList.add('collapsed');
+                }, 150);
+            });
+        }
+
+        function getGreeting() {
+            const brasiliaTime = new Date().toLocaleString('en-US', { 
+                timeZone: 'America/Sao_Paulo',
+                hour12: false 
+            });
+            const hour = new Date(brasiliaTime).getHours();
+            
+            if (hour >= 0 && hour < 12) return 'Bom dia';
+            else if (hour >= 12 && hour < 18) return 'Boa tarde';
+            else return 'Boa noite';
+        }
+
+        function getOrCreateDeviceToken() {
+            let token = localStorage.getItem('irDeviceToken');
+            if (!token) {
+                token = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('irDeviceToken', token);
+            }
+            return token;
+        }
+
+        async function getPublicIP() {
+            try {
+                const response = await fetch(`${API_URL}/ip`);
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Erro ao obter IP:', error);
+                return null;
+            }
+        }
+
+        function showMessage(message, type = 'error') {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = `message ${type} show`;
+            setTimeout(() => messageBox.classList.remove('show'), 5000);
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const btn = document.querySelector('.toggle-password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'OCULTAR';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'MOSTRAR';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.toLowerCase().trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Autenticando...';
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, deviceToken })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showMessage(data.message || data.error || 'Erro ao fazer login', 'error');
+                    return;
+                }
+
+                if (data.success && data.session) {
+                    sessionStorage.setItem('irUserSession', JSON.stringify(data.session));
+                    currentSessionInfo = data.session;
+                    showDashboard(data.session);
+                    showMessage('Login realizado com sucesso!', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showMessage('Erro ao realizar login. Tente novamente.', 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Entrar';
+            }
+        });
+
+        function showDashboard(sessionInfo) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').style.display = 'block';
+            
+            const greeting = getGreeting();
+            const userName = sessionInfo.name || sessionInfo.username;
+            const userSector = sessionInfo.sector || 'Usuário';
+            
+            document.getElementById('sidebarUserName').textContent = userName;
+            document.getElementById('sidebarUserSector').textContent = userSector;
+            document.getElementById('welcomeGreeting').textContent = `${greeting}, ${userName}`;
+            
+            loadSidebarModules(sessionInfo);
+            setupSidebarHover();
+            
+            const splash = document.getElementById('splashWelcome');
+            if (splash) {
+                splash.style.display = 'flex';
+                splash.style.animation = 'none';
+                void splash.offsetWidth;
+                splash.style.animation = 'fadeOut 0.5s ease 2.5s forwards';
+                setTimeout(() => { splash.style.display = 'none'; }, 3000);
+            }
+        }
+
+        function loadSidebarModules(sessionInfo) {
+            const sidebarModules = document.getElementById('sidebarModules');
+            sidebarModules.innerHTML = '';
+            
+            const userPermissions = getUserPermissions(sessionInfo);
+            
+            MODULES.forEach(module => {
+                if (!userPermissions.includes(module.id)) return;
+                
+                const moduleItem = document.createElement('div');
+                moduleItem.className = 'module-item';
+                
+                if (!module.available || !module.url) {
+                    moduleItem.classList.add('disabled');
+                    moduleItem.style.opacity = '0.5';
+                    moduleItem.style.cursor = 'not-allowed';
+                } else {
+                    moduleItem.id = `module-${module.id}`;
+                    moduleItem.setAttribute('data-tooltip', module.name);
+                    moduleItem.onclick = () => openModule(module);
+                }
+                
+                const icon = MODULE_ICONS[module.id] || MODULE_ICONS['documentos-comercial'];
+                
+                moduleItem.innerHTML = `
+                    <span class="module-icon">${icon}</span>
+                    <span>${module.name}</span>
+                `;
+                
+                sidebarModules.appendChild(moduleItem);
+            });
+        }
+
+        function openModule(module) {
+            document.querySelectorAll('.module-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const moduleItem = document.getElementById(`module-${module.id}`);
+            if (moduleItem) moduleItem.classList.add('active');
+            
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            welcomeScreen.classList.add('hidden-smooth');
+            
+            let iframeContainer = document.getElementById(`iframe-${module.id}`);
+            
+            if (!iframeContainer) {
+                const params = new URLSearchParams({
+                    sessionToken: currentSessionInfo.sessionToken
+                });
+                
+                iframeContainer = document.createElement('div');
+                iframeContainer.className = 'iframe-container';
+                iframeContainer.id = `iframe-${module.id}`;
+                iframeContainer.innerHTML = `<iframe src="${module.url}?${params.toString()}" title="${module.name}"></iframe>`;
+                
+                document.getElementById('iframesContainer').appendChild(iframeContainer);
+            }
+            
+            document.querySelectorAll('.iframe-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            setTimeout(() => {
+                iframeContainer.classList.add('active');
+            }, 50);
+            
+            activeModuleId = module.id;
+        }
+
+        async function verifySession(sessionToken) {
+            try {
+                const response = await fetch(`${API_URL}/verify-session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionToken })
+                });
+
+                const data = await response.json();
+                return data.valid === true;
+            } catch (error) {
+                console.error('Erro ao verificar sessão:', error);
+                return false;
+            }
+        }
+
+        async function logout() {
+            if (!confirm('Deseja realmente sair?')) return;
+            
+            try {
+                const sessionInfo = JSON.parse(sessionStorage.getItem('irUserSession'));
+                if (sessionInfo) {
+                    await fetch(`${API_URL}/logout`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            sessionToken: sessionInfo.sessionToken,
+                            deviceToken: sessionInfo.deviceToken
+                        })
+                    });
+                }
+            } catch (error) {
+                console.error('Erro no logout:', error);
+            }
+            
+            performLogout();
+        }
+
+        function forceLogout(message) {
+            showMessage(message || 'Sessão encerrada', 'warning');
+            performLogout();
+        }
+
+        function performLogout() {
+            sessionStorage.removeItem('irUserSession');
+            
+            document.getElementById('dashboardScreen').style.display = 'none';
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('password').value = '';
+            document.getElementById('iframesContainer').innerHTML = '';
+            
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            welcomeScreen.classList.remove('hidden-smooth');
+        }
+
+        async function init() {
+            try {
+                deviceToken = getOrCreateDeviceToken();
+                publicIP = await getPublicIP();
+                
+                const sessionInfo = sessionStorage.getItem('irUserSession');
+                if (sessionInfo) {
+                    const session = JSON.parse(sessionInfo);
+                    const isValid = await verifySession(session.sessionToken);
+                    
+                    if (isValid) {
+                        currentSessionInfo = session;
+                        showDashboard(session);
+                    } else {
+                        sessionStorage.removeItem('irUserSession');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
