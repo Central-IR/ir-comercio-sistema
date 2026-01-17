@@ -23,7 +23,7 @@ const AUTHORIZED_IPS = process.env.AUTHORIZED_IPS
 const supabaseUrlPortal = process.env.SUPABASE_URL_PORTAL;
 const supabaseKeyPortal = process.env.SUPABASE_ANON_KEY;
 
-// PROJETO 2: APLICAÇÕES (precos, transportadoras, estoque, etc)
+// PROJETO 2: APLICAÇÕES (precos, cotacoes, transportadoras, etc)
 const supabaseUrlApps = process.env.SUPABASE_URL;
 const supabaseKeyApps = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -43,7 +43,7 @@ if (!supabaseUrlApps || !supabaseKeyApps) {
 // Cliente do Portal (para autenticação e gestão de usuários)
 const supabasePortal = createClient(supabaseUrlPortal, supabaseKeyPortal);
 
-// Cliente das Aplicações (para dados dos apps: precos, transportadoras, etc)
+// Cliente das Aplicações (para dados dos apps: precos, cotacoes, etc)
 const supabaseApps = createClient(supabaseUrlApps, supabaseKeyApps);
 
 console.log('✅ Supabase Portal configurado:', supabaseUrlPortal);
@@ -160,6 +160,7 @@ app.use(express.json({ limit: '10mb' }));
 // ============================================================
 app.use('/portal', express.static(path.join(__dirname, 'apps', 'portal', 'public')));
 app.use('/precos', express.static(path.join(__dirname, 'apps', 'precos', 'public')));
+app.use('/cotacoes', express.static(path.join(__dirname, 'apps', 'cotacoes', 'public')));
 
 // ============================================================
 // MIDDLEWARE DE AUTENTICAÇÃO PARA APPS
@@ -180,7 +181,8 @@ async function verificarAutenticacao(req, res, next) {
   // IMPORTANTE: Permitir todos os arquivos estáticos
   if (publicPaths.includes(req.path) || 
       req.path.startsWith('/portal/') || 
-      req.path.startsWith('/precos/')) {
+      req.path.startsWith('/precos/') ||
+      req.path.startsWith('/cotacoes/')) {
     return next();
   }
 
@@ -588,7 +590,6 @@ app.get('/precos/app', (req, res) => {
   res.sendFile(path.join(__dirname, 'apps', 'precos', 'public', 'index.html'));
 });
 
-// Apenas as rotas de API precisam de autenticação, não os arquivos estáticos
 app.head('/api/precos', (req, res) => {
   res.status(200).end();
 });
@@ -708,6 +709,115 @@ app.delete('/api/precos/:id', async (req, res) => {
 });
 
 // ============================================================
+// ROTAS DE COTAÇÕES DE FRETE (USA supabaseApps)
+// ============================================================
+
+app.get('/cotacoes/app', (req, res) => {
+  res.sendFile(path.join(__dirname, 'apps', 'cotacoes', 'public', 'index.html'));
+});
+
+app.head('/api/cotacoes', (req, res) => {
+  res.status(200).end();
+});
+
+// Listar cotações (USA supabaseApps)
+app.get('/api/cotacoes', async (req, res) => {
+  try {
+    const { data, error } = await supabaseApps
+      .from('cotacoes')
+      .select('*')
+      .order('timestamp', { ascending: false });
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (error) {
+    console.error('Erro ao buscar cotações:', error);
+    res.status(500).json({ error: 'Erro ao buscar cotações' });
+  }
+});
+
+// Buscar cotação específica (USA supabaseApps)
+app.get('/api/cotacoes/:id', async (req, res) => {
+  try {
+    const { data, error } = await supabaseApps
+      .from('cotacoes')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: 'Cotação não encontrada' });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Erro ao buscar cotação:', error);
+    res.status(500).json({ error: 'Erro ao buscar cotação' });
+  }
+});
+
+// Criar cotação (USA supabaseApps)
+app.post('/api/cotacoes', async (req, res) => {
+  try {
+    const { data, error } = await supabaseApps
+      .from('cotacoes')
+      .insert([{
+        ...req.body,
+        timestamp: new Date().toISOString(),
+        createdat: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(201).json(data);
+  } catch (error) {
+    console.error('Erro ao criar cotação:', error);
+    res.status(500).json({ error: 'Erro ao criar cotação' });
+  }
+});
+
+// Atualizar cotação (USA supabaseApps)
+app.put('/api/cotacoes/:id', async (req, res) => {
+  try {
+    const { data, error } = await supabaseApps
+      .from('cotacoes')
+      .update({
+        ...req.body,
+        updatedat: new Date().toISOString()
+      })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: 'Cotação não encontrada' });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Erro ao atualizar cotação:', error);
+    res.status(500).json({ error: 'Erro ao atualizar cotação' });
+  }
+});
+
+// Deletar cotação (USA supabaseApps)
+app.delete('/api/cotacoes/:id', async (req, res) => {
+  try {
+    const { error } = await supabaseApps
+      .from('cotacoes')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
+    res.status(204).end();
+  } catch (error) {
+    console.error('Erro ao excluir cotação:', error);
+    res.status(500).json({ error: 'Erro ao excluir cotação' });
+  }
+});
+
+// ============================================================
 // HEALTH CHECK
 // ============================================================
 app.get('/health', async (req, res) => {
@@ -722,7 +832,12 @@ app.get('/health', async (req, res) => {
       timestamp: new Date().toISOString(),
       supabasePortal: supabaseUrlPortal ? 'configured' : 'not configured',
       supabaseApps: supabaseUrlApps ? 'configured' : 'not configured',
-      authorizedIPs: AUTHORIZED_IPS.length > 0 ? 'configured' : 'not configured'
+      authorizedIPs: AUTHORIZED_IPS.length > 0 ? 'configured' : 'not configured',
+      apps: {
+        portal: 'active',
+        precos: 'active',
+        cotacoes: 'active'
+      }
     });
   } catch (error) {
     res.json({
@@ -757,13 +872,14 @@ app.use((err, req, res, next) => {
 // ============================================================
 app.listen(PORT, '0.0.0.0', () => {
   console.log('\n' + '='.repeat(60));
-  console.log('🚀 SISTEMA I.R. COMÉRCIO - MONOREPO UNIFICADO');
+  console.log('🚀 SISTEMA I.R. COMÉRCIO - MONOREPO COMPLETO');
   console.log('='.repeat(60));
   console.log(`✅ Servidor rodando na porta ${PORT}`);
   console.log(`✅ Supabase Portal: ${supabaseUrlPortal}`);
   console.log(`✅ Supabase Apps: ${supabaseUrlApps}`);
   console.log(`📍 Portal: http://localhost:${PORT}/`);
   console.log(`📍 Tabela de Preços: http://localhost:${PORT}/precos/app`);
+  console.log(`📍 Cotações de Frete: http://localhost:${PORT}/cotacoes/app`);
   console.log(`🔒 IPs autorizados: ${AUTHORIZED_IPS.join(', ')}`);
   console.log(`⏰ Horário comercial: Seg-Sex, 8h-18h (apenas LOGIN)`);
   console.log(`🛡️ Rate limiting: 5 tentativas/15min por IP`);
