@@ -161,6 +161,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/portal', express.static(path.join(__dirname, 'apps', 'portal', 'public')));
 app.use('/precos', express.static(path.join(__dirname, 'apps', 'precos', 'public')));
 app.use('/cotacoes', express.static(path.join(__dirname, 'apps', 'cotacoes', 'public')));
+app.use('/ordem-compra', express.static(path.join(__dirname, 'apps', 'ordem-compra', 'public')));
 
 // ============================================================
 // MIDDLEWARE DE AUTENTICAÇÃO PARA APPS
@@ -182,7 +183,8 @@ async function verificarAutenticacao(req, res, next) {
   if (publicPaths.includes(req.path) || 
       req.path.startsWith('/portal/') || 
       req.path.startsWith('/precos/') ||
-      req.path.startsWith('/cotacoes/')) {
+      req.path.startsWith('/cotacoes/') ||
+      req.path.startsWith('/ordem-compra/')) {
     return next();
   }
 
@@ -818,6 +820,170 @@ app.delete('/api/cotacoes/:id', async (req, res) => {
 });
 
 // ============================================================
+// ROTAS DE ORDEM DE COMPRA (USA supabaseApps)
+// ============================================================
+
+app.get('/ordem-compra/app', (req, res) => {
+  res.sendFile(path.join(__dirname, 'apps', 'ordem-compra', 'public', 'index.html'));
+});
+
+app.head('/api/ordens', (req, res) => {
+  res.status(200).end();
+});
+
+// Listar ordens
+app.get('/api/ordens', async (req, res) => {
+  try {
+    const { data, error } = await supabaseApps
+      .from('ordens_compra')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data || []);
+  } catch (error) {
+    console.error('Erro ao buscar ordens:', error);
+    res.status(500).json({ error: 'Erro ao buscar ordens' });
+  }
+});
+
+// Buscar ordem específica
+app.get('/api/ordens/:id', async (req, res) => {
+  try {
+    const { data, error } = await supabaseApps
+      .from('ordens_compra')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: 'Ordem não encontrada' });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Erro ao buscar ordem:', error);
+    res.status(500).json({ error: 'Erro ao buscar ordem' });
+  }
+});
+
+// Criar ordem
+app.post('/api/ordens', async (req, res) => {
+  try {
+    const { 
+      numeroOrdem, responsavel, dataOrdem, razaoSocial, nomeFantasia, 
+      cnpj, enderecoFornecedor, site, contato, telefone, email, items, 
+      valorTotal, frete, localEntrega, prazoEntrega, transporte, 
+      formaPagamento, prazoPagamento, dadosBancarios, status 
+    } = req.body;
+
+    const novaOrdem = {
+      numero_ordem: numeroOrdem,
+      responsavel,
+      data_ordem: dataOrdem,
+      razao_social: razaoSocial,
+      nome_fantasia: nomeFantasia || null,
+      cnpj,
+      endereco_fornecedor: enderecoFornecedor || null,
+      site: site || null,
+      contato: contato || null,
+      telefone: telefone || null,
+      email: email || null,
+      items: items || [],
+      valor_total: valorTotal || 'R$ 0,00',
+      frete: frete || null,
+      local_entrega: localEntrega || null,
+      prazo_entrega: prazoEntrega || null,
+      transporte: transporte || null,
+      forma_pagamento: formaPagamento,
+      prazo_pagamento: prazoPagamento,
+      dados_bancarios: dadosBancarios || null,
+      status: status || 'aberta'
+    };
+
+    const { data, error } = await supabaseApps
+      .from('ordens_compra')
+      .insert([novaOrdem])
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(201).json(data);
+  } catch (error) {
+    console.error('Erro ao criar ordem:', error);
+    res.status(500).json({ error: 'Erro ao criar ordem' });
+  }
+});
+
+// Atualizar ordem
+app.put('/api/ordens/:id', async (req, res) => {
+  try {
+    const { 
+      numeroOrdem, responsavel, dataOrdem, razaoSocial, nomeFantasia, 
+      cnpj, enderecoFornecedor, site, contato, telefone, email, items, 
+      valorTotal, frete, localEntrega, prazoEntrega, transporte, 
+      formaPagamento, prazoPagamento, dadosBancarios, status 
+    } = req.body;
+
+    const ordemAtualizada = {
+      numero_ordem: numeroOrdem,
+      responsavel,
+      data_ordem: dataOrdem,
+      razao_social: razaoSocial,
+      nome_fantasia: nomeFantasia || null,
+      cnpj,
+      endereco_fornecedor: enderecoFornecedor || null,
+      site: site || null,
+      contato: contato || null,
+      telefone: telefone || null,
+      email: email || null,
+      items: items || [],
+      valor_total: valorTotal || 'R$ 0,00',
+      frete: frete || null,
+      local_entrega: localEntrega || null,
+      prazo_entrega: prazoEntrega || null,
+      transporte: transporte || null,
+      forma_pagamento: formaPagamento,
+      prazo_pagamento: prazoPagamento,
+      dados_bancarios: dadosBancarios || null,
+      status: status || 'aberta'
+    };
+
+    const { data, error } = await supabaseApps
+      .from('ordens_compra')
+      .update(ordemAtualizada)
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: 'Ordem não encontrada' });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Erro ao atualizar ordem:', error);
+    res.status(500).json({ error: 'Erro ao atualizar ordem' });
+  }
+});
+
+// Deletar ordem
+app.delete('/api/ordens/:id', async (req, res) => {
+  try {
+    const { error } = await supabaseApps
+      .from('ordens_compra')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
+    res.status(204).end();
+  } catch (error) {
+    console.error('Erro ao excluir ordem:', error);
+    res.status(500).json({ error: 'Erro ao excluir ordem' });
+  }
+});
+
+// ============================================================
 // HEALTH CHECK
 // ============================================================
 app.get('/health', async (req, res) => {
@@ -836,7 +1002,8 @@ app.get('/health', async (req, res) => {
       apps: {
         portal: 'active',
         precos: 'active',
-        cotacoes: 'active'
+        cotacoes: 'active',
+        'ordem-compra': 'active'
       }
     });
   } catch (error) {
@@ -880,6 +1047,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📍 Portal: http://localhost:${PORT}/`);
   console.log(`📍 Tabela de Preços: http://localhost:${PORT}/precos/app`);
   console.log(`📍 Cotações de Frete: http://localhost:${PORT}/cotacoes/app`);
+  console.log(`📍 Ordem de Compra: http://localhost:${PORT}/ordem-compra/app`);
   console.log(`🔒 IPs autorizados: ${AUTHORIZED_IPS.join(', ')}`);
   console.log(`⏰ Horário comercial: Seg-Sex, 8h-18h (apenas LOGIN)`);
   console.log(`🛡️ Rate limiting: 5 tentativas/15min por IP`);
