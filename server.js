@@ -158,6 +158,8 @@ app.use(express.json({ limit: '10mb' }));
 // ============================================================
 // ARQUIVOS ESTÁTICOS - ANTES DO MIDDLEWARE DE AUTENTICAÇÃO
 // ============================================================
+// Adicionar ANTES dos outros arquivos estáticos
+app.use('/app-loader.js', express.static(path.join(__dirname, 'app-loader.js')));
 app.use('/portal', express.static(path.join(__dirname, 'apps', 'portal', 'public')));
 app.use('/precos', express.static(path.join(__dirname, 'apps', 'precos', 'public')));
 app.use('/cotacoes', express.static(path.join(__dirname, 'apps', 'cotacoes', 'public')));
