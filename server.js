@@ -156,9 +156,16 @@ app.options('*', cors());
 app.use(express.json({ limit: '10mb' }));
 
 // ============================================================
+// ARQUIVOS ESTÁTICOS - ANTES DO MIDDLEWARE DE AUTENTICAÇÃO
+// ============================================================
+app.use('/portal', express.static(path.join(__dirname, 'apps', 'portal', 'public')));
+app.use('/precos', express.static(path.join(__dirname, 'apps', 'precos', 'public')));
+
+// ============================================================
 // MIDDLEWARE DE AUTENTICAÇÃO PARA APPS
 // ============================================================
 async function verificarAutenticacao(req, res, next) {
+  // Rotas públicas (INCLUINDO arquivos estáticos)
   const publicPaths = [
     '/',
     '/health',
@@ -170,7 +177,10 @@ async function verificarAutenticacao(req, res, next) {
     '/api/business-hours'
   ];
   
-  if (publicPaths.includes(req.path) || req.path.startsWith('/portal/')) {
+  // IMPORTANTE: Permitir todos os arquivos estáticos
+  if (publicPaths.includes(req.path) || 
+      req.path.startsWith('/portal/') || 
+      req.path.startsWith('/precos/')) {
     return next();
   }
 
@@ -252,12 +262,6 @@ async function verificarAutenticacao(req, res, next) {
 }
 
 app.use(verificarAutenticacao);
-
-// ============================================================
-// ARQUIVOS ESTÁTICOS
-// ============================================================
-app.use('/portal', express.static(path.join(__dirname, 'apps', 'portal', 'public')));
-app.use('/precos', express.static(path.join(__dirname, 'apps', 'precos', 'public')));
 
 // ============================================================
 // ROTAS DO PORTAL
@@ -584,8 +588,7 @@ app.get('/precos/app', (req, res) => {
   res.sendFile(path.join(__dirname, 'apps', 'precos', 'public', 'index.html'));
 });
 
-app.use('/api/precos', verificarAutenticacao);
-
+// Apenas as rotas de API precisam de autenticação, não os arquivos estáticos
 app.head('/api/precos', (req, res) => {
   res.status(200).end();
 });
