@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="png" href="I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-PRETO.png">
+    <link rel="icon" type="png" href="/portal/I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-PRETO.png">
     <title>Portal</title>
     <style>
         /* VARIÁVEIS BASE */
@@ -23,7 +23,7 @@
     --table-stripe: #FAFAFA;
     --table-hover: rgb(25, 25, 25);
     --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --th-bg: #002045
+    --th-bg: #002045;
     --th-color: #FFFFFF;
     --th-border: #E5E7EB;
     --shadow: rgba(25, 25, 25);
@@ -229,13 +229,13 @@ body {
 
         .message.error {
             background: rgba(239, 68, 68, 0.15);
-            border-left: 4px solid var(--error);
+            border-left: 4px solid var(--alert-color);
             color: #DC2626;
         }
 
         .message.success {
             background: rgba(34, 197, 94, 0.15);
-            border-left: 4px solid var(--success);
+            border-left: 4px solid var(--success-color);
             color: #15803D;
         }
 
@@ -417,7 +417,7 @@ body {
         }
 
         .logout-btn-sidebar:hover {
-            color: var(--error);
+            color: var(--alert-color);
         }
 
         .sidebar-modules {
@@ -694,11 +694,11 @@ body {
     <div id="loginScreen" class="login-screen">
         <div class="login-content">
             <div class="logo-container">
-                <img src="I.R.-COMERCIO-MATERIAIS-ELETRICOS-LTDA.png" 
+                <img src="/portal/I.R.-COMERCIO-MATERIAIS-ELETRICOS-LTDA.png" 
                      alt="Logo I.R. Comércio" 
                      class="logo-img logo-dark"
                      onerror="this.style.display='none'">
-                <img src="I.R.-COMERCIO-E-MATERIAIS-ELETRICOS.png" 
+                <img src="/portal/I.R.-COMERCIO-E-MATERIAIS-ELETRICOS.png" 
                      alt="Logo I.R. Comércio" 
                      class="logo-img logo-light"
                      onerror="this.style.display='none'">
@@ -910,7 +910,7 @@ body {
         };
 
         // ==========================================
-        // LISTA DE MÓDULOS
+        // LISTA DE MÓDULOS - URLs RELATIVAS
         // ==========================================
         const MODULES = [
             { id: 'pregões', name: 'Pregões 🚧', url: 'https://pregoes.onrender.com', available: true },
