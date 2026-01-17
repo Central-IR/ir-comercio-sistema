@@ -1287,12 +1287,12 @@ function updateDashboard() {
     const totalAbertas = monthOrdens.filter(o => o.Status === 'Aberta').Comprimento;
 
     const numeros = ordens
-        .map(o => parseint(o.numero_ordem ||  o.numeroOrdem))
+        .map(o => parseInt(o.numero_ordem || o.numeroOrdem))
         .filter(n => !isNaN(n));
-seja valorTotalMes = 0;
-Ordens do mês.forEach(ordem => {
-    valorTotalMes += parseCurrency(ordem.valor_total ||  Ordem.valorTotal);
-});
+    let valorTotalMes = 0;
+    ordensDoMes.forEach(ordem => {
+        valorTotalMes += parseCurrency(ordem.valor_total || ordem.valorTotal);
+    });
 ===== FIM DA MODIFICAÇÃO =====
 
 documentar.getElementById('totalOrdens').textContent = ultimoNumero;
@@ -1301,9 +1301,9 @@ documentar.getElementById('totalAbertas').textContent = totalAbertas;
 document.getElementById('valorTotal').textContent = formatCurrency(valorTotalMes, 2); // ← Adicionar o ", 2"// ← NOVA LINHA
 
     const cardAbertas = document.getElementById('cardAbertas');
-    se (!cardAbertas) retorno;
+    if (!cardAbertas) return;
 
-    seja pulseBadge = cardAbertas.consultySelector('.pulse-badge');
+    let pulseBadge = cardAbertas.querySelector('.pulse-badge');
 
     if (totalAbertas > 0) {
         cardAbertas.classList.add('has-alert');
@@ -1531,7 +1531,7 @@ function generatePDFForOrdem(ordem) {
     // CABEÇALHO COM LOGO E TEXTO TRANSLÚCIDO
     const logoHeader = new Image();
     logoHeader.crossOrigin = 'anonymous';
-    logoHeader.src = 'I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-LTDA-PDF.png';
+    logoHeader.src = '/ordem-compra/I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-LTDA-PDF.png';
 
     logoHeader.onload = function() {
         try {
@@ -1596,7 +1596,7 @@ function continuarGeracaoPDF(doc, ordem, y, margin, pageWidth, pageHeight, lineH
     // Carregar a imagem do cabeçalho uma vez para usar em todas as páginas
     const logoHeaderImg = new Image();
     logoHeaderImg.crossOrigin = 'anonymous';
-    logoHeaderImg.src = 'I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-LTDA-PDF.png';
+    logoHeaderImg.src = '/ordem-compra/I.R.-COMERCIO-E-MATERIAIS-ELETRICOS-LTDA-PDF.png';
 
     // Aguardar carregamento da logo antes de continuar
     logoHeaderImg.onload = function() {
@@ -2078,7 +2078,7 @@ function continuarGeracaoPDF(doc, ordem, y, margin, pageWidth, pageHeight, lineH
 
         const assinatura = new Image();
         assinatura.crossOrigin = 'anonymous';
-        assinatura.src = 'assinatura.png';
+        assinatura.src = '/ordem-compra/assinatura.png';
 
         assinatura.onload = function() {
             try {
