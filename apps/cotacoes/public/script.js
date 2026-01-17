@@ -1,6 +1,6 @@
 const DEVELOPMENT_MODE = false;
-const PORTAL_URL = 'https://ir-comercio-portal-zcan.onrender.com';
-const API_URL = 'https://cotacoes-frete-aikc.onrender.com/api';
+const PORTAL_URL = window.location.origin;
+const API_URL = window.location.origin + '/api';
 
 let cotacoes = [];
 let currentMonth = new Date();
